@@ -1,36 +1,52 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# Dependencias
+# ==========================================
+# DEPENDENCIAS (NO subir)
+# ==========================================
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Archivos de build
+# ==========================================
+# ARCHIVOS DE BUILD (NO subir)
+# ==========================================
 /dist/
 /tmp/
 /out-tsc/
 /.angular/cache/
 .angular/
+target/
+*.jar
 
-# IDEs
+# ==========================================
+# IDEs (NO subir)
+# ==========================================
 .vscode/
 .idea/
 *.swp
 *.swo
+*.iml
 
-# OS
+# ==========================================
+# OS (NO subir)
+# ==========================================
 .DS_Store
 Thumbs.db
 
-# Environment files
+# ==========================================
+# CONFIGURACIONES LOCALES (NO subir)
+# ==========================================
 .env
 .env.local
 
-# Logs
+# ==========================================
+# LOGS (NO subir)
+# ==========================================
 *.log
 
-# Archivos temporales
+# ==========================================
+# ARCHIVOS TEMPORALES (NO subir)
+# ==========================================
 *.zip
 *.tmp
-EOF
