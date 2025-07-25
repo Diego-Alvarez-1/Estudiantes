@@ -1,0 +1,50 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="jumbotron bg-light p-5 rounded shadow">
+        <h1 class="display-4 text-center text-primary">¡Bienvenido!</h1>
+        <p class="lead text-center" *ngIf="currentUser">
+          Hola <strong>{{ currentUser.usuario }}</strong>, has iniciado sesión correctamente.
+        </p>
+        <hr class="my-4">
+        <p class="text-center">
+          Este es el panel de administración. Utiliza el menú de navegación para acceder a las diferentes secciones.
+        </p>
+        <div class="text-center">
+          <a class="btn btn-primary btn-lg me-2" href="/usuarios" role="button">Gestionar Usuarios</a>
+          <a class="btn btn-success btn-lg" href="/productos" role="button">Gestionar Productos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Usuarios</h5>
+          <p class="card-text">Administra los usuarios del sistema</p>
+          <a href="/usuarios" class="btn btn-primary">Ir a Usuarios</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Productos</h5>
+          <p class="card-text">Gestiona el catálogo de productos</p>
+          <a href="/productos" class="btn btn-success">Ir a Productos</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Configuración</h5>
+          <p class="card-text">Ajustes del sistema</p>
+          <a href="#" class="btn btn-secondary">Próximamente</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
