@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-MsestudiantescmdApplication<msestudiantescmd>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "org.ebiz.msestudiantescmd.MsestudiantescmdApplication",
+            "projectName": "msestudiantescmd",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
