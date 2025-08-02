@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: sistema-reserva-libros
+  datasource:
+    url: jdbc:postgresql://localhost:5432/biblioteca_lasalle
+    username: postgres
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
