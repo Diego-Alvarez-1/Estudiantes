@@ -1,12 +1,12 @@
 package com.diegoAlvarez.sistema_reserva_libros;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootApplication
-public class SistemaReservaLibrosApplication {
+@SpringBootTest
+class SistemaReservaLibrosApplicationTests {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SistemaReservaLibrosApplication.class, args);
+    @Test
+    void contextLoads() {
     }
 }
