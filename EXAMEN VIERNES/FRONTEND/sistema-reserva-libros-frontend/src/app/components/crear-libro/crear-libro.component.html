@@ -1,0 +1,92 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title mb-0">Agregar Nuevo Libro</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="formLibro" (ngSubmit)="crearLibro()">
+            
+            <!-- Título -->
+            <div class="mb-3">
+              <label for="titulo" class="form-label">Título <span class="text-danger">*</span></label>
+              <input 
+                type="text" 
+                class="form-control"
+                id="titulo"
+                formControlName="titulo"
+                [class.is-invalid]="isFieldInvalid('titulo')"
+                placeholder="Ingrese el título del libro">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('titulo')">
+                {{ getFieldError('titulo') }}
+              </div>
+            </div>
+
+            <!-- Código -->
+            <div class="mb-3">
+              <label for="codigo" class="form-label">Código <span class="text-danger">*</span></label>
+              <input 
+                type="text" 
+                class="form-control"
+                id="codigo"
+                formControlName="codigo"
+                [class.is-invalid]="isFieldInvalid('codigo')"
+                placeholder="Ingrese el código del libro">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('codigo')">
+                {{ getFieldError('codigo') }}
+              </div>
+            </div>
+
+            <!-- Autor -->
+            <div class="mb-3">
+              <label for="autor" class="form-label">Autor <span class="text-danger">*</span></label>
+              <input 
+                type="text" 
+                class="form-control"
+                id="autor"
+                formControlName="autor"
+                [class.is-invalid]="isFieldInvalid('autor')"
+                placeholder="Ingrese el nombre del autor">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('autor')">
+                {{ getFieldError('autor') }}
+              </div>
+            </div>
+
+            <!-- Stock -->
+            <div class="mb-3">
+              <label for="stock" class="form-label">Stock <span class="text-danger">*</span></label>
+              <input 
+                type="number" 
+                class="form-control"
+                id="stock"
+                formControlName="stock"
+                [class.is-invalid]="isFieldInvalid('stock')"
+                placeholder="Ingrese la cantidad en stock"
+                min="0">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('stock')">
+                {{ getFieldError('stock') }}
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button 
+                type="button" 
+                class="btn btn-secondary me-md-2"
+                routerLink="/libros">
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="!formLibro.valid">
+                Guardar Libro
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

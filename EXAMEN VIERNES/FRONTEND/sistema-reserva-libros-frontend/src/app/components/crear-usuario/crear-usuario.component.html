@@ -1,0 +1,61 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title mb-0">Crear Nuevo Usuario</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="formUsuario" (ngSubmit)="crearUsuario()">
+            
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+              <input 
+                type="text" 
+                class="form-control"
+                id="nombre"
+                formControlName="nombre"
+                [class.is-invalid]="isFieldInvalid('nombre')"
+                placeholder="Ingrese el nombre completo">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('nombre')">
+                {{ getFieldError('nombre') }}
+              </div>
+            </div>
+
+            <!-- Correo -->
+            <div class="mb-3">
+              <label for="correo" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+              <input 
+                type="email" 
+                class="form-control"
+                id="correo"
+                formControlName="correo"
+                [class.is-invalid]="isFieldInvalid('correo')"
+                placeholder="ejemplo@correo.com">
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('correo')">
+                {{ getFieldError('correo') }}
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button 
+                type="button" 
+                class="btn btn-secondary me-md-2"
+                routerLink="/usuarios">
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="!formUsuario.valid">
+                Guardar Usuario
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
