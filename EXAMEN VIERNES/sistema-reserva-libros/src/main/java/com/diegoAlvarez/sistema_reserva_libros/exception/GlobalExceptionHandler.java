@@ -13,7 +13,7 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<?>> handleValidationException(
+    public ResponseEntity<ApiResponse<Object>> handleValidationException(
             MethodArgumentNotValidException exception) {
         
         List<ApiResponse.FieldErrorDetail> errores = exception.getBindingResult()
@@ -30,27 +30,27 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(LibroNoDisponibleException.class)
-    public ResponseEntity<ApiResponse<?>> handleLibroNoDisponible(LibroNoDisponibleException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleLibroNoDisponible(LibroNoDisponibleException ex) {
         return ApiResponse.error(ex.getMessage()).toResponseEntity(HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(StockAgotadoException.class)
-    public ResponseEntity<ApiResponse<?>> handleStockAgotado(StockAgotadoException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleStockAgotado(StockAgotadoException ex) {
         return ApiResponse.error(ex.getMessage()).toResponseEntity(HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(LibroYaReservadoException.class)
-    public ResponseEntity<ApiResponse<?>> handleLibroYaReservado(LibroYaReservadoException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleLibroYaReservado(LibroYaReservadoException ex) {
         return ApiResponse.error(ex.getMessage()).toResponseEntity(HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ApiResponse<?>> handleEntityNotFound(EntityNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleEntityNotFound(EntityNotFoundException ex) {
         return ApiResponse.error(ex.getMessage()).toResponseEntity(HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<?>> handleGeneralException(Exception ex) {
+    public ResponseEntity<ApiResponse<Object>> handleGeneralException(Exception ex) {
         return ApiResponse.error("Error interno del servidor").toResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
