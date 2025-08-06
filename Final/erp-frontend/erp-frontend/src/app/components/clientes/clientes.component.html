@@ -1,0 +1,150 @@
+<div class="container-fluid">
+  <div class="page-header">
+    <h2>Gestión de Clientes</h2>
+    <p class="text-muted">Administra la información de tus clientes</p>
+  </div>
+
+  <div class="row">
+    <!-- Formulario -->
+    <div class="col-lg-4 col-md-12 mb-4">
+      <div class="card form-card">
+        <div class="card-body">
+          <h5 class="card-title">{{ isEditing ? 'Editar Cliente' : 'Nuevo Cliente' }}</h5>
+          <form [formGroup]="isEditing ? editForm : clienteForm" (ngSubmit)="isEditing ? onEdit() : onSubmit()">
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="nombre" 
+                     formControlName="nombre"
+                     [class.is-invalid]="(isEditing ? editForm : clienteForm).get('nombre')?.invalid && (isEditing ? editForm : clienteForm).get('nombre')?.touched">
+              <div class="invalid-feedback">
+                El nombre es obligatorio (mínimo 2 caracteres)
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" 
+                     class="form-control" 
+                     id="email" 
+                     formControlName="email"
+                     [class.is-invalid]="(isEditing ? editForm : clienteForm).get('email')?.invalid && (isEditing ? editForm : clienteForm).get('email')?.touched">
+              <div class="invalid-feedback">
+                Ingrese un email válido
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="rut">RUT</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="rut" 
+                     formControlName="rut"
+                     placeholder="12345678-9"
+                     [class.is-invalid]="(isEditing ? editForm : clienteForm).get('rut')?.invalid && (isEditing ? editForm : clienteForm).get('rut')?.touched">
+              <div class="invalid-feedback">
+                El RUT es obligatorio
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="telefono">Teléfono</label>
+              <input type="text" class="form-control" id="telefono" formControlName="telefono">
+            </div>
+
+            <div class="form-group">
+              <label for="direccion">Dirección</label>
+              <textarea class="form-control" id="direccion" formControlName="direccion" rows="2"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" 
+                      class="btn btn-primary" 
+                      [disabled]="(isEditing ? editForm : clienteForm).invalid || loading">
+                {{ isEditing ? 'Actualizar' : 'Crear' }} Cliente
+              </button>
+              <button type="button" 
+                      class="btn btn-secondary ml-2" 
+                      *ngIf="isEditing"
+                      (click)="cancelEdit()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="col-lg-8 col-md-12">
+      <div class="card table-card">
+        <div class="card-body">
+          <div class="table-header">
+            <h5>Lista de Clientes</h5>
+            <div class="table-actions">
+              <span class="badge badge-info">Total: {{ clientes.length }}</span>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>RUT</th>
+                  <th>Teléfono</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cliente of clientes">
+                  <td>{{ cliente.nombre }}</td>
+                  <td>{{ cliente.email }}</td>
+                  <td>{{ cliente.rut }}</td>
+                  <td>{{ cliente.telefono || 'No especificado' }}</td>
+                  <td>
+                    <span class="badge" [class]="cliente.activo ? 'badge-success' : 'badge-secondary'">
+                      {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <button type="button" 
+                              class="btn btn-sm btn-outline-primary" 
+                              (click)="editarCliente(cliente)">
+                        Editar
+                      </button>
+                      <button type="button" 
+                              class="btn btn-sm btn-outline-danger" 
+                              *ngIf="cliente.activo"
+                              (click)="desactivarCliente(cliente.id!)">
+                        Desactivar
+                      </button>
+                      <button type="button" 
+                              class="btn btn-sm btn-outline-success" 
+                              *ngIf="!cliente.activo"
+                              (click)="activarCliente(cliente.id!)">
+                        Activar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div *ngIf="clientes.length === 0 && !loading" class="text-center py-4">
+              <p class="text-muted">No hay clientes registrados</p>
+            </div>
+            
+            <div *ngIf="loading" class="text-center py-4">
+              <p>Cargando...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

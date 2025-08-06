@@ -1,0 +1,139 @@
+<div class="container-fluid dashboard">
+  <div class="welcome-header">
+    <h1>Dashboard</h1>
+    <p class="text-muted">Resumen general de tu sistema ERP</p>
+  </div>
+
+  <!-- Métricas principales -->
+  <div class="row stats-cards">
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="stat-card clients">
+        <div class="stat-icon">
+          👥
+        </div>
+        <div class="stat-content">
+          <h3>{{ totalClientes }}</h3>
+          <p>Clientes Activos</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="stat-card products">
+        <div class="stat-icon">
+          📦
+        </div>
+        <div class="stat-content">
+          <h3>{{ totalProductos }}</h3>
+          <p>Productos</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="stat-card sales">
+        <div class="stat-icon">
+          💰
+        </div>
+        <div class="stat-content">
+          <h3>{{ totalVentas }}</h3>
+          <p>Ventas del Mes</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+      <div class="stat-card suppliers">
+        <div class="stat-icon">
+          🏢
+        </div>
+        <div class="stat-content">
+          <h3>{{ totalProveedores }}</h3>
+          <p>Proveedores</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertas y acciones rápidas -->
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card alert-card">
+        <div class="card-body">
+          <h5 class="card-title">🚨 Productos con Stock Bajo</h5>
+          <div *ngIf="productosStockBajo.length > 0; else noStockBajo">
+            <div class="alert alert-warning" *ngFor="let producto of productosStockBajo">
+              <strong>{{ producto.nombre }}</strong> - Stock: {{ producto.stockActual }} 
+              <small class="text-muted">(Mínimo: {{ producto.stockMinimo }})</small>
+            </div>
+            <button class="btn btn-warning btn-sm" routerLink="/productos">
+              Ver Productos
+            </button>
+          </div>
+          <ng-template #noStockBajo>
+            <p class="text-success">✅ Todos los productos tienen stock suficiente</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+      <div class="card quick-actions-card">
+        <div class="card-body">
+          <h5 class="card-title">⚡ Acciones Rápidas</h5>
+          <div class="quick-actions">
+            <button class="btn btn-primary" routerLink="/ventas">
+              Nueva Venta
+            </button>
+            <button class="btn btn-success" routerLink="/compras">
+              Nueva Compra
+            </button>
+            <button class="btn btn-info" routerLink="/productos">
+              Gestionar Stock
+            </button>
+            <button class="btn btn-secondary" routerLink="/clientes">
+              Nuevo Cliente
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen de actividad reciente -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card activity-card">
+        <div class="card-body">
+          <h5 class="card-title">📊 Resumen de Actividad</h5>
+          <div class="row text-center">
+            <div class="col-md-3">
+              <div class="activity-item">
+                <h4 class="text-success">${{ ventasDelMes | number:'1.2-2' }}</h4>
+                <p>Ventas del Mes</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="activity-item">
+                <h4 class="text-info">${{ comprasDelMes | number:'1.2-2' }}</h4>
+                <p>Compras del Mes</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="activity-item">
+                <h4 class="text-warning">{{ ventasPendientes }}</h4>
+                <p>Ventas Pendientes</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="activity-item">
+                <h4 class="text-danger">{{ comprasPendientes }}</h4>
+                <p>Compras Pendientes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

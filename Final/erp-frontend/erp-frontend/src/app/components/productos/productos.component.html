@@ -1,0 +1,229 @@
+<div class="container-fluid">
+  <div class="page-header">
+    <h2>Gestión de Productos</h2>
+    <p class="text-muted">Administra tu inventario de productos</p>
+  </div>
+
+  <div class="row">
+    <!-- Formulario -->
+    <div class="col-lg-4 col-md-12 mb-4">
+      <div class="card form-card">
+        <div class="card-body">
+          <h5 class="card-title">{{ isEditing ? 'Editar Producto' : 'Nuevo Producto' }}</h5>
+          <form [formGroup]="isEditing ? editForm : productoForm" (ngSubmit)="isEditing ? onEdit() : onSubmit()">
+            <div class="form-group">
+              <label for="codigo">Código</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="codigo" 
+                     formControlName="codigo"
+                     [class.is-invalid]="(isEditing ? editForm : productoForm).get('codigo')?.invalid && (isEditing ? editForm : productoForm).get('codigo')?.touched">
+              <div class="invalid-feedback">
+                El código es obligatorio (mínimo 3 caracteres)
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="nombre" 
+                     formControlName="nombre"
+                     [class.is-invalid]="(isEditing ? editForm : productoForm).get('nombre')?.invalid && (isEditing ? editForm : productoForm).get('nombre')?.touched">
+              <div class="invalid-feedback">
+                El nombre es obligatorio
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="descripcion">Descripción</label>
+              <textarea class="form-control" id="descripcion" formControlName="descripcion" rows="2"></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label for="precio">Precio</label>
+                  <input type="number" 
+                         class="form-control" 
+                         id="precio" 
+                         formControlName="precio"
+                         step="0.01"
+                         [class.is-invalid]="(isEditing ? editForm : productoForm).get('precio')?.invalid && (isEditing ? editForm : productoForm).get('precio')?.touched">
+                  <div class="invalid-feedback">
+                    El precio debe ser mayor a 0
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group">
+                  <label for="stockActual">Stock Actual</label>
+                  <input type="number" 
+                         class="form-control" 
+                         id="stockActual" 
+                         formControlName="stockActual">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="stockMinimo">Stock Mínimo</label>
+              <input type="number" 
+                     class="form-control" 
+                     id="stockMinimo" 
+                     formControlName="stockMinimo">
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" 
+                      class="btn btn-primary" 
+                      [disabled]="(isEditing ? editForm : productoForm).invalid || loading">
+                {{ isEditing ? 'Actualizar' : 'Crear' }} Producto
+              </button>
+              <button type="button" 
+                      class="btn btn-secondary ml-2" 
+                      *ngIf="isEditing"
+                      (click)="cancelEdit()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="col-lg-8 col-md-12">
+      <div class="card table-card">
+        <div class="card-body">
+          <div class="table-header">
+            <h5>Lista de Productos</h5>
+            <div class="table-actions">
+              <span class="badge badge-info">Total: {{ productos.length }}</span>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let producto of productos">
+                  <td><code>{{ producto.codigo }}</code></td>
+                  <td>
+                    <div>
+                      <strong>{{ producto.nombre }}</strong>
+                      <small class="text-muted d-block" *ngIf="producto.descripcion">
+                        {{ producto.descripcion }}
+                      </small>
+                    </div>
+                  </td>
+                  <td class="text-success font-weight-bold">${{ producto.precio | number:'1.2-2' }}</td>
+                  <td>
+                    <span class="stock-info" [class]="getStockStatus(producto)">
+                      {{ producto.stockActual }}
+                    </span>
+                    <small class="text-muted d-block">Min: {{ producto.stockMinimo }}</small>
+                  </td>
+                  <td>
+                    <span class="badge" [class]="producto.activo ? 'badge-success' : 'badge-secondary'">
+                      {{ producto.activo ? 'Activo' : 'Inactivo' }}
+                    </span>
+                    <span class="badge badge-warning ml-1" *ngIf="getStockStatus(producto) === 'low'">
+                      Stock Bajo
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <button type="button" 
+                              class="btn btn-sm btn-outline-primary" 
+                              (click)="editarProducto(producto)">
+                        Editar
+                      </button>
+                      <button type="button" 
+                              class="btn btn-sm btn-outline-info" 
+                              (click)="abrirModalStock(producto)">
+                        Stock
+                      </button>
+                      <button type="button" 
+                              class="btn btn-sm btn-outline-danger" 
+                              *ngIf="producto.activo"
+                              (click)="desactivarProducto(producto.id!)">
+                        Desactivar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div *ngIf="productos.length === 0 && !loading" class="text-center py-4">
+              <p class="text-muted">No hay productos registrados</p>
+            </div>
+            
+            <div *ngIf="loading" class="text-center py-4">
+              <p>Cargando...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Stock -->
+<div class="modal fade show" [style.display]="showStockModal ? 'block' : 'none'" *ngIf="showStockModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Actualizar Stock - {{ selectedProducto?.nombre }}</h5>
+        <button type="button" class="close" (click)="closeStockModal()">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="stockForm" (ngSubmit)="actualizarStock()">
+          <div class="form-group">
+            <label>Stock Actual: <strong>{{ selectedProducto?.stockActual }}</strong></label>
+          </div>
+          
+          <div class="form-group">
+            <label for="operacion">Operación</label>
+            <select class="form-control" id="operacion" formControlName="operacion">
+              <option value="ENTRADA">Entrada (+)</option>
+              <option value="SALIDA">Salida (-)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cantidad">Cantidad</label>
+            <input type="number" 
+                   class="form-control" 
+                   id="cantidad" 
+                   formControlName="cantidad"
+                   min="1"
+                   [class.is-invalid]="stockForm.get('cantidad')?.invalid && stockForm.get('cantidad')?.touched">
+            <div class="invalid-feedback">
+              La cantidad debe ser mayor a 0
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeStockModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="actualizarStock()" [disabled]="stockForm.invalid">
+          Actualizar Stock
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showStockModal"></div>
