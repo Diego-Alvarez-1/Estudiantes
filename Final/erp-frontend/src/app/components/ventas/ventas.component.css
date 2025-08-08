@@ -1,0 +1,47 @@
+@import '../clientes/clientes.component.css';
+
+.detalles-section {
+  margin: 1.5rem 0;
+  padding: 0 1.5rem;
+}
+
+.detalle-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.detalle-form .form-control {
+  flex: 1;
+}
+
+.detalles-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.detalles-table th,
+.detalles-table td {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.total-section {
+  text-align: right;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: #212529;
+  padding: 0.3rem 0.6rem;
+}
+
+.detalle-info {
+  padding: 0 1.5rem;
+}

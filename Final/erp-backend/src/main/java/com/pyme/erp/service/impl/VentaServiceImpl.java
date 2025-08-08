@@ -142,7 +142,7 @@ public class VentaServiceImpl implements VentaService {
     }
 
     private String generarNumeroFactura() {
-        // Generar número de factura basado en timestamp
+        // genera num de factura basado en timestamp
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         return "FAC-" + timestamp;
     }

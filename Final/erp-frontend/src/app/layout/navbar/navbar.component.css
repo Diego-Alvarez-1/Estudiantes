@@ -1,0 +1,20 @@
+.navbar {
+  background: linear-gradient(135deg, #34495e 0);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-brand h4 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+
+.user-info {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}

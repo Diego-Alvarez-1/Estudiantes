@@ -1,0 +1,137 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Gestión de Productos</h1>
+    <button class="btn-primary" (click)="abrirModalCrear()">
+      <span class="icon">➕</span>
+      Nuevo Producto
+    </button>
+  </div>
+
+  <!-- Tabla de productos -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of productos">
+          <td>{{ producto.codigo }}</td>
+          <td>{{ producto.nombre }}</td>
+          <td>${{ producto.precio | number:'1.2-2' }}</td>
+          <td>
+            <span [class]="'stock ' + (producto.stockActual! <= producto.stockMinimo! ? 'low' : 'normal')">
+              {{ producto.stockActual }}
+            </span>
+          </td>
+          <td>
+            <span [class]="'status ' + (producto.activo ? 'active' : 'inactive')">
+              {{ producto.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-edit" (click)="editarProducto(producto)" title="Editar">
+                ✏️
+              </button>
+              <button class="btn-info" (click)="abrirModalStock(producto)" title="Actualizar Stock">
+                📦
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal crear/editar producto -->
+  <div class="modal" [class.show]="mostrarModal" (click)="cerrarModal($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ modoEdicion ? 'Editar Producto' : 'Nuevo Producto' }}</h3>
+        <button class="close-btn" (click)="cerrarModal()">&times;</button>
+      </div>
+      
+      <form [formGroup]="productoForm" (ngSubmit)="guardarProducto()">
+        <div class="form-group">
+          <label>Código *</label>
+          <input type="text" formControlName="codigo" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>Nombre *</label>
+          <input type="text" formControlName="nombre" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea formControlName="descripcion" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Precio *</label>
+          <input type="number" formControlName="precio" class="form-control" min="0" step="0.01">
+        </div>
+        
+        <div class="form-group">
+          <label>Stock Actual</label>
+          <input type="number" formControlName="stockActual" class="form-control" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label>Stock Mínimo</label>
+          <input type="number" formControlName="stockMinimo" class="form-control" min="0">
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="!productoForm.valid">
+            {{ modoEdicion ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal actualizar stock -->
+  <div class="modal" [class.show]="mostrarModalStock" (click)="cerrarModalStock($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Actualizar Stock - {{ productoSeleccionado?.nombre }}</h3>
+        <button class="close-btn" (click)="cerrarModalStock()">&times;</button>
+      </div>
+      
+      <form [formGroup]="stockForm" (ngSubmit)="actualizarStock()">
+        <div class="form-group">
+          <label>Stock Actual: {{ productoSeleccionado?.stockActual }}</label>
+        </div>
+        
+        <div class="form-group">
+          <label>Operación *</label>
+          <select formControlName="operacion" class="form-control">
+            <option value="ENTRADA">Entrada (Sumar)</option>
+            <option value="SALIDA">Salida (Restar)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Cantidad *</label>
+          <input type="number" formControlName="cantidad" class="form-control" min="1">
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModalStock()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="!stockForm.valid">
+            Actualizar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

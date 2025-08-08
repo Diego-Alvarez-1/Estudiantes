@@ -1,0 +1,100 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Gestión de Clientes</h1>
+    <button class="btn-primary" (click)="abrirModalCrear()">
+      <span class="icon">➕</span>
+      Nuevo Cliente
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-section">
+    <input type="text" [(ngModel)]="filtroNombre" (keyup)="filtrarClientes()" 
+           placeholder="Buscar por nombre..." class="form-control">
+  </div>
+
+  <!-- Tabla de clientes -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>RUT</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of clientesFiltrados">
+          <td>{{ cliente.nombre }}</td>
+          <td>{{ cliente.email }}</td>
+          <td>{{ cliente.rut }}</td>
+          <td>{{ cliente.telefono || 'N/A' }}</td>
+          <td>
+            <span [class]="'status ' + (cliente.activo ? 'active' : 'inactive')">
+              {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-edit" (click)="editarCliente(cliente)" title="Editar">
+                ✏️
+              </button>
+              <button [class]="cliente.activo ? 'btn-danger' : 'btn-success'" 
+                      (click)="toggleEstado(cliente)" 
+                      [title]="cliente.activo ? 'Desactivar' : 'Activar'">
+                {{ cliente.activo ? '🚫' : '✅' }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal para crear/editar -->
+  <div class="modal" [class.show]="mostrarModal" (click)="cerrarModal($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}</h3>
+        <button class="close-btn" (click)="cerrarModal()">&times;</button>
+      </div>
+      
+      <form [formGroup]="clienteForm" (ngSubmit)="guardarCliente()">
+        <div class="form-group">
+          <label>Nombre *</label>
+          <input type="text" formControlName="nombre" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" formControlName="email" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>RUT *</label>
+          <input type="text" formControlName="rut" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" formControlName="telefono" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>Dirección</label>
+          <textarea formControlName="direccion" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="!clienteForm.valid">
+            {{ modoEdicion ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

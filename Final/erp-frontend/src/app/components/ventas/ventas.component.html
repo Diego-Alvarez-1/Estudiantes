@@ -1,0 +1,167 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Gestión de Ventas</h1>
+    <button class="btn-primary" (click)="abrirModalCrear()">
+      <span class="icon">➕</span>
+      Nueva Venta
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>N° Factura</th>
+          <th>Cliente</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let venta of ventas">
+          <td>{{ venta.numeroFactura }}</td>
+          <td>{{ venta.cliente?.nombre }}</td>
+          <td>{{ venta.fechaVenta | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>${{ venta.total | number:'1.2-2' }}</td>
+          <td>
+            <span [class]="'status ' + getEstadoClass(venta.estado!)">
+              {{ venta.estado }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-info" (click)="verDetalle(venta)" title="Ver Detalle">
+                👁️
+              </button>
+              <button class="btn-warning" (click)="cambiarEstado(venta)" 
+                      *ngIf="venta.estado === 'PENDIENTE'" title="Marcar como Pagada">
+                💰
+              </button>
+              <button class="btn-danger" (click)="cancelarVenta(venta)" 
+                      *ngIf="venta.estado !== 'CANCELADA'" title="Cancelar">
+                ❌
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal crear venta -->
+  <div class="modal" [class.show]="mostrarModal" (click)="cerrarModal($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Nueva Venta</h3>
+        <button class="close-btn" (click)="cerrarModal()">&times;</button>
+      </div>
+      
+      <form [formGroup]="ventaForm" (ngSubmit)="guardarVenta()">
+        <div class="form-group">
+          <label>Cliente *</label>
+          <select formControlName="clienteId" class="form-control">
+            <option value="">Seleccionar cliente</option>
+            <option *ngFor="let cliente of clientes" [value]="cliente.id">
+              {{ cliente.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="detalles-section">
+          <h4>Productos</h4>
+          <div class="detalle-form">
+            <select [(ngModel)]="productoSeleccionado" class="form-control" [ngModelOptions]="{standalone: true}">
+              <option value="">Seleccionar producto</option>
+              <option *ngFor="let producto of productos" [ngValue]="producto">
+                {{ producto.nombre }} - ${{ producto.precio }} (Stock: {{ producto.stockActual }})
+              </option>
+            </select>
+            <input type="number" [(ngModel)]="cantidadProducto" placeholder="Cantidad" 
+                   class="form-control" min="1" [ngModelOptions]="{standalone: true}">
+            <button type="button" class="btn-secondary" (click)="agregarDetalle()">Agregar</button>
+          </div>
+
+          <div class="detalles-list" *ngIf="detallesVenta.length > 0">
+            <table class="detalles-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unit.</th>
+                  <th>Subtotal</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let detalle of detallesVenta; let i = index">
+                  <td>{{ detalle.producto?.nombre }}</td>
+                  <td>{{ detalle.cantidad }}</td>
+                  <td>${{ detalle.precioUnitario | number:'1.2-2' }}</td>
+                  <td>${{ detalle.subtotal | number:'1.2-2' }}</td>
+                  <td>
+                    <button type="button" class="btn-danger" (click)="removerDetalle(i)">❌</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="total-section">
+              <strong>Total: ${{ calcularTotal() | number:'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="!ventaForm.valid || detallesVenta.length === 0">
+            Crear Venta
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal detalle venta -->
+  <div class="modal" [class.show]="mostrarModalDetalle" (click)="cerrarModalDetalle($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Detalle de Venta - {{ ventaSeleccionada?.numeroFactura }}</h3>
+        <button class="close-btn" (click)="cerrarModalDetalle()">&times;</button>
+      </div>
+      
+      <div class="detalle-info" *ngIf="ventaSeleccionada">
+        <p><strong>Cliente:</strong> {{ ventaSeleccionada.cliente?.nombre }}</p>
+        <p><strong>Fecha:</strong> {{ ventaSeleccionada.fechaVenta | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Estado:</strong> {{ ventaSeleccionada.estado }}</p>
+        
+        <table class="detalles-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detalle of ventaSeleccionada.detalles">
+              <td>{{ detalle.producto?.nombre }}</td>
+              <td>{{ detalle.cantidad }}</td>
+              <td>${{ detalle.precioUnitario | number:'1.2-2' }}</td>
+              <td>${{ detalle.subtotal | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="total-section">
+          <strong>Total: ${{ ventaSeleccionada.total | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="cerrarModalDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

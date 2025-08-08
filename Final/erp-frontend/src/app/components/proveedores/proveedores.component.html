@@ -1,0 +1,93 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Gestión de Proveedores</h1>
+    <button class="btn-primary" (click)="abrirModalCrear()">
+      <span class="icon">➕</span>
+      Nuevo Proveedor
+    </button>
+  </div>
+
+  <div class="filters-section">
+    <input type="text" [(ngModel)]="filtroNombre" (keyup)="filtrarProveedores()" 
+           placeholder="Buscar por nombre..." class="form-control">
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>RUT</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let proveedor of proveedoresFiltrados">
+          <td>{{ proveedor.nombre }}</td>
+          <td>{{ proveedor.email }}</td>
+          <td>{{ proveedor.rut }}</td>
+          <td>{{ proveedor.telefono || 'N/A' }}</td>
+          <td>
+            <span [class]="'status ' + (proveedor.activo ? 'active' : 'inactive')">
+              {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-edit" (click)="editarProveedor(proveedor)" title="Editar">
+                ✏️
+              </button>
+              <button [class]="proveedor.activo ? 'btn-danger' : 'btn-success'" 
+                      (click)="toggleEstado(proveedor)" 
+                      [title]="proveedor.activo ? 'Desactivar' : 'Activar'">
+                {{ proveedor.activo ? '🚫' : '✅' }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal" [class.show]="mostrarModal" (click)="cerrarModal($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ modoEdicion ? 'Editar Proveedor' : 'Nuevo Proveedor' }}</h3>
+        <button class="close-btn" (click)="cerrarModal()">&times;</button>
+      </div>
+      
+      <form [formGroup]="proveedorForm" (ngSubmit)="guardarProveedor()">
+        <div class="form-group">
+          <label>Nombre *</label>
+          <input type="text" formControlName="nombre" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" formControlName="email" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>RUT *</label>
+          <input type="text" formControlName="rut" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" formControlName="telefono" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Dirección</label>
+          <textarea formControlName="direccion" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="!proveedorForm.valid">
+            {{ modoEdicion ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,169 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Gestión de Compras</h1>
+    <button class="btn-primary" (click)="abrirModalCrear()">
+      <span class="icon">➕</span>
+      Nueva Compra
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>N° Orden</th>
+          <th>Proveedor</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let compra of compras">
+          <td>{{ compra.numeroOrden }}</td>
+          <td>{{ compra.proveedor?.nombre }}</td>
+          <td>{{ compra.fechaCompra | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>${{ compra.total | number:'1.2-2' }}</td>
+          <td>
+            <span [class]="'status ' + getEstadoClass(compra.estado!)">
+              {{ compra.estado }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-info" (click)="verDetalle(compra)" title="Ver Detalle">
+                👁️
+              </button>
+              <button class="btn-warning" (click)="marcarRecibida(compra)" 
+                      *ngIf="compra.estado === 'PENDIENTE'" title="Marcar como Recibida">
+                📦
+              </button>
+              <button class="btn-danger" (click)="cancelarCompra(compra)" 
+                      *ngIf="compra.estado !== 'CANCELADA'" title="Cancelar">
+                ❌
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal crear compra -->
+  <div class="modal" [class.show]="mostrarModal" (click)="cerrarModal($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Nueva Compra</h3>
+        <button class="close-btn" (click)="cerrarModal()">&times;</button>
+      </div>
+      
+      <form [formGroup]="compraForm" (ngSubmit)="guardarCompra()">
+        <div class="form-group">
+          <label>Proveedor *</label>
+          <select formControlName="proveedorId" class="form-control">
+            <option value="">Seleccionar proveedor</option>
+            <option *ngFor="let proveedor of proveedores" [value]="proveedor.id">
+              {{ proveedor.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="detalles-section">
+          <h4>Productos</h4>
+          <div class="detalle-form">
+            <select [(ngModel)]="productoSeleccionado" class="form-control" [ngModelOptions]="{standalone: true}">
+              <option value="">Seleccionar producto</option>
+              <option *ngFor="let producto of productos" [ngValue]="producto">
+                {{ producto.nombre }}
+              </option>
+            </select>
+            <input type="number" [(ngModel)]="cantidadProducto" placeholder="Cantidad" 
+                   class="form-control" min="1" [ngModelOptions]="{standalone: true}">
+            <input type="number" [(ngModel)]="precioUnitario" placeholder="Precio Unitario" 
+                   class="form-control" min="0" step="0.01" [ngModelOptions]="{standalone: true}">
+            <button type="button" class="btn-secondary" (click)="agregarDetalle()">Agregar</button>
+          </div>
+
+          <div class="detalles-list" *ngIf="detallesCompra.length > 0">
+            <table class="detalles-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unit.</th>
+                  <th>Subtotal</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let detalle of detallesCompra; let i = index">
+                  <td>{{ detalle.producto?.nombre }}</td>
+                  <td>{{ detalle.cantidad }}</td>
+                  <td>${{ detalle.precioUnitario | number:'1.2-2' }}</td>
+                  <td>${{ detalle.subtotal | number:'1.2-2' }}</td>
+                  <td>
+                    <button type="button" class="btn-danger" (click)="removerDetalle(i)">❌</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="total-section">
+              <strong>Total: ${{ calcularTotal() | number:'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="!compraForm.valid || detallesCompra.length === 0">
+            Crear Compra
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal detalle compra -->
+  <div class="modal" [class.show]="mostrarModalDetalle" (click)="cerrarModalDetalle($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Detalle de Compra - {{ compraSeleccionada?.numeroOrden }}</h3>
+        <button class="close-btn" (click)="cerrarModalDetalle()">&times;</button>
+      </div>
+      
+      <div class="detalle-info" *ngIf="compraSeleccionada">
+        <p><strong>Proveedor:</strong> {{ compraSeleccionada.proveedor?.nombre }}</p>
+        <p><strong>Fecha:</strong> {{ compraSeleccionada.fechaCompra | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Estado:</strong> {{ compraSeleccionada.estado }}</p>
+        
+        <table class="detalles-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detalle of compraSeleccionada.detalles">
+              <td>{{ detalle.producto?.nombre }}</td>
+              <td>{{ detalle.cantidad }}</td>
+              <td>${{ detalle.precioUnitario | number:'1.2-2' }}</td>
+              <td>${{ detalle.subtotal | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="total-section">
+          <strong>Total: ${{ compraSeleccionada.total | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="cerrarModalDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="dashboard-container">
+  <h1 class="page-title">Dashboard</h1>
+  
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-icon">👥</span>
+        <h3>Clientes Activos</h3>
+      </div>
+      <p class="stat-number">{{ totalClientes }}</p>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-icon">📦</span>
+        <h3>Productos</h3>
+      </div>
+      <p class="stat-number">{{ totalProductos }}</p>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-icon">💰</span>
+        <h3>Ventas del Mes</h3>
+      </div>
+      <p class="stat-number">{{ ventasMes }}</p>
+    </div>
+
+    <div class="stat-card alert">
+      <div class="stat-header">
+        <span class="stat-icon">⚠️</span>
+        <h3>Stock Bajo</h3>
+      </div>
+      <p class="stat-number">{{ productosStockBajo }}</p>
+    </div>
+  </div>
+
+  <div class="charts-section">
+    <div class="chart-container">
+      <h3>Actividad Reciente</h3>
+      <div class="activity-list">
+        <div class="activity-item">
+          <span class="activity-icon">📊</span>
+          <span>Nueva venta registrada</span>
+          <span class="activity-time">Hace 10 min</span>
+        </div>
+        <div class="activity-item">
+          <span class="activity-icon">📦</span>
+          <span>Producto agregado al inventario</span>
+          <span class="activity-time">Hace 1 hora</span>
+        </div>
+        <div class="activity-item">
+          <span class="activity-icon">👤</span>
+          <span>Nuevo cliente registrado</span>
+          <span class="activity-time">Hace 2 horas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
